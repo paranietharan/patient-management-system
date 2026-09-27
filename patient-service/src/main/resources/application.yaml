@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: patient-service
+  datasource:
+    url: jdbc:postgresql://${PATIENT_DB_HOST}:${PATIENT_DB_PORT}/${PATIENT_DB_NAME}
+    username: ${PATIENT_DB_USER}
+    password: ${PATIENT_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: ${PATIENT_SERVICE_PORT}
