@@ -1,4 +1,22 @@
 services:
+  patient-service:
+    build:
+      context: ./patient-service
+      dockerfile: Dockerfile
+    container_name: patient_service
+    environment:
+      - PATIENT_SERVICE_PORT=${PATIENT_SERVICE_PORT:-8080}
+      - PATIENT_DB_HOST=${PATIENT_DB_HOST:-postgres}
+      - PATIENT_DB_PORT=${PATIENT_DB_PORT:-5432}
+      - PATIENT_DB_NAME=${PATIENT_DB_NAME}
+      - PATIENT_DB_USER=${PATIENT_DB_USER}
+      - PATIENT_DB_PASSWORD=${PATIENT_DB_PASSWORD}
+    ports:
+      - "${PATIENT_SERVICE_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:17
     container_name: patient_db
@@ -10,6 +28,11 @@ services:
       - "${PATIENT_DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PATIENT_DB_USER} -d ${PATIENT_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
